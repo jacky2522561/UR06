@@ -4,9 +4,6 @@ const ButtonPage = () => {
     const handleClick = () =>{
         console.log('click');
     }
-    const handleMouse = () =>{
-        console.log('mouse');
-    }
     return (
         <div>
             <div>
@@ -16,7 +13,7 @@ const ButtonPage = () => {
                 </Button>
             </div>
             <div>
-                <Button onMouseEnter = {handleMouse} danger outline>
+                <Button danger outline>
                     <GoAlertFill />
                     test2
                 </Button>
