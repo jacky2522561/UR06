@@ -1,29 +1,14 @@
 import Table from './Table';
-import { useState } from 'react';
 import { GoTriangleDown, GoTriangleUp } from "react-icons/go";
+import useSort from '../hooks/use-sort';
 const SortableTable = (props) => {
-    const [sortOrder, setSortOrder] = useState(null);
-    const [sortBy, setSortBy] = useState(null);
     const { config, data } = props;
-
-    const handleClick = (label) => {
-        if(sortBy && label !== sortBy){
-            setSortOrder('asc');
-            setSortBy(label);
-            return;
-        }
-        if (sortOrder === 'asc') {
-            setSortOrder('desc');
-            setSortBy(label);
-        } else if (sortOrder === 'desc') {
-            setSortOrder(null);
-            setSortBy(null);
-        } else if (sortOrder === null) {
-            setSortOrder('asc');
-            setSortBy(label);
-        }
-    }
-
+    const {
+        sortBy,
+        sortOrder,
+        sortedData,
+        sortColumn
+    } = useSort(data,config);
 
     const updateConfig = config.map((column) => {
         if (!column.sortValue) {
@@ -31,29 +16,13 @@ const SortableTable = (props) => {
         }
         return {
             ...column,
-            header: () => <th className='cursor-pointer hover:bg-gray-100' onClick={() => handleClick(column.label)}>
+            header: () => <th className='cursor-pointer hover:bg-gray-100' onClick={() => sortColumn(column.label)}>
                 <div className='flex item-center'>
                     {getIcons(column.label, sortBy, sortOrder)}{column.label}
                 </div>
             </th>
         }
     })
-
-    let sortedData = data;
-    if (sortOrder && sortBy) {
-        const { sortValue } = config.find(item => item.label === sortBy);
-        sortedData = [...data].sort((a, b) => {
-            const valueA = sortValue(a);
-            const valueB = sortValue(b);
-
-            let reverseSort = sortOrder === 'asc' ? 1 : -1;
-
-            if (typeof valueA === 'string') {
-                return valueA.localeCompare(valueB) * reverseSort;
-            }
-            return (valueA - valueB) * reverseSort;
-        })
-    }
 
     return (
         <div>
